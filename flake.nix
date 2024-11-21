@@ -7,6 +7,13 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    #Templ
+    templ.url = "github:a-h/templ";
+
+    # Home Manager
+    home-manager.url = "github:nix-community/home-manager/release-24.05";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs-unstable";
   };
 
   outputs = {
@@ -15,6 +22,8 @@
     nixpkgs,
     nixpkgs-unstable,
     nix-homebrew,
+    templ,
+    home-manager,
     ...
   } @ inputs: let
     add-unstable-packages = final: _prev: {
@@ -33,6 +42,7 @@
       # $ nix-env -qaP | grep wget
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [
+        inputs.templ.overlays.default
         add-unstable-packages
       ];
       environment.systemPackages =
@@ -69,7 +79,7 @@
           pkgs.zoxide
           pkgs.atuin
           pkgs.mkcert
-          pkgs.postgresql_16
+          pkgs.postgresql_17
           pkgs.mongodb
           pkgs.trashy
           pkgs.mas
@@ -83,7 +93,7 @@
           pkgs.act
           pkgs.fnm
           pkgs.flyctl
-          pkgs._1password-cli
+          pkgs._1password
           pkgs.deno
           pkgs.bun
           # Start GUI apps available on nix-pkgs unfree
@@ -208,12 +218,17 @@
       # Auto upgrade nix package and the daemon service.
       services.nix-daemon.enable = true;
 
+      # Enable postgres
+      services.postgresql = {
+        enable = true;
+        package = pkgs.postgresql_17;
+      };
+
       # Necessary for using flakes on this system.
       nix.settings.experimental-features = "nix-command flakes";
 
       # Create /etc/zshrc that loads the nix-darwin environment.
-      programs.zsh.enable = true;  # default shell on catalina
-      # programs.fish.enable = true;
+      programs.zsh.enable = true;
 
       # Set Git commit hash for darwin-version.
       system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -282,6 +297,13 @@
     darwinConfigurations."mini" = nix-darwin.lib.darwinSystem {
       modules = [
         configuration
+        home-manager.darwinModules.home-manager
+        {
+          # `home-manager` config
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.frankie = import ./home.nix;
+        }
         nix-homebrew.darwinModules.nix-homebrew
         {
           nix-homebrew = {
