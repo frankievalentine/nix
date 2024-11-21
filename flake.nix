@@ -56,6 +56,7 @@
           pkgs.wget
           pkgs.curl
           pkgs.ruby
+          pkgs.templ
           pkgs.zsh
           pkgs.zsh-completions
           pkgs.zsh-autosuggestions
@@ -79,7 +80,7 @@
           pkgs.zoxide
           pkgs.atuin
           pkgs.mkcert
-          pkgs.postgresql_17
+          pkgs.postgresql_16
           pkgs.mongodb
           pkgs.trashy
           pkgs.mas
@@ -197,17 +198,17 @@
         };
       in
         pkgs.lib.mkForce ''
-          # Set up applications.
-          echo "setting up /Applications..." >&2
-          rm -rf /Applications/Nix\ Apps
-          mkdir -p /Applications/Nix\ Apps
-          find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-          while read -r src; do
-            app_name=$(basename "$src")
-            echo "copying $src" >&2
-            ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
-          done
-        '';
+        # Set up applications.
+        echo "setting up /Applications..." >&2
+        rm -rf /Applications/Nix\ Apps
+        mkdir -p /Applications/Nix\ Apps
+        find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
+        while read -r src; do
+          app_name=$(basename "$src")
+          echo "copying $src" >&2
+          ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
+        done
+            '';
 
       # Disable Mac startup chime
       system.startup.chime = false;
@@ -221,7 +222,7 @@
       # Enable postgres
       services.postgresql = {
         enable = true;
-        package = pkgs.postgresql_17;
+        package = pkgs.postgresql_16;
       };
 
       # Necessary for using flakes on this system.
@@ -302,7 +303,7 @@
           # `home-manager` config
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.frankie = import ./home.nix;
+          home-manager.users.frankievalentine = import ./home.nix;
         }
         nix-homebrew.darwinModules.nix-homebrew
         {
