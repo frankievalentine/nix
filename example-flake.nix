@@ -1,5 +1,5 @@
 {
-  description = "Darwin system flake - v3frankie";
+  description = "Example Darwin system flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
@@ -45,20 +45,37 @@
       ];
       environment.systemPackages =
         [
+          pkgs.alacritty
+          pkgs.air
+          pkgs.awscli
           pkgs.bun
+          pkgs.ffmpeg
+          pkgs.jujutsu
           pkgs.git
           pkgs.gh
+          pkgs.gnupg
+          pkgs.unstable.go_1_23
           pkgs.iperf
+          pkgs.lua-language-server
           pkgs.mkalias
           pkgs.neovim
+          pkgs.nil
           pkgs.obsidian
+          pkgs.opentofu
+          pkgs.pass
           pkgs.postgresql_16
           pkgs.rclone
+          pkgs.ripgrep
           pkgs.rustup
+          pkgs.sqlc
+          pkgs.stylua
           pkgs.unstable.stripe-cli
+          pkgs.tailwindcss
+          pkgs.tailwindcss-language-server
           pkgs.qmk
           pkgs.templ
           pkgs.tmux
+          pkgs.unstable.amber-lang
           pkgs.zoxide
         ];
 
@@ -73,10 +90,15 @@
           "mas"
         ];
         casks = [
-          "raycast"
+          "hammerspoon"
+          "amethyst"
+          "alfred"
+          "logseq"
           "notion"
+          "firefox"
           "discord"
           "iina"
+          "the-unarchiver"
         ];
         taps = [
         ];
@@ -98,7 +120,7 @@
           rm -rf /Applications/Nix\ Apps
           mkdir -p /Applications/Nix\ Apps
           find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-          while read src; do
+          while read -r src; do
             app_name=$(basename "$src")
             echo "copying $src" >&2
             ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
@@ -128,6 +150,7 @@
       system.stateVersion = 4;
 
       system.defaults = {
+        NSGlobalDomain.AppleICUForce24HourTime = true;
         NSGlobalDomain.AppleShowAllExtensions = true;
         loginwindow.GuestEnabled = false;
         finder.FXPreferredViewStyle = "clmv";
@@ -139,7 +162,7 @@
   in {
     # Build darwin flake using:
     # $ darwin-rebuild build --flake .#simple
-    darwinConfigurations."macbook" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."mini" = nix-darwin.lib.darwinSystem {
       modules = [
         configuration
         home-manager.darwinModules.home-manager
@@ -153,6 +176,6 @@
     };
 
     # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."macbook".pkgs;
+    darwinPackages = self.darwinConfigurations."mini".pkgs;
   };
 }

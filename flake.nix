@@ -8,20 +8,39 @@
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, nix-homebrew }:
-  let
-    configuration = { pkgs, config, ... }: {
-
-      nixpkgs.config.allowUnfree = true;
-
+  outputs = {
+    self,
+    nix-darwin,
+    nixpkgs,
+    nixpkgs-unstable,
+    ...
+  } @ inputs: let
+    add-unstable-packages = final: _prev: {
+      unstable = import inputs.nixpkgs-unstable {
+        system = "aarch64-darwin";
+      };
+    };
+    username = "frankievalentine";
+    configuration = {
+      pkgs,
+      lib,
+      config,
+      ...
+    }: {
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
+      nixpkgs.config.allowUnfree = true;
+      nixpkgs.overlays = [
+        inputs.templ.overlays.default
+        add-unstable-packages
+      ];
       environment.systemPackages =
         [
           pkgs.coreutils
           pkgs.findutils
-          pkgs.grep
+          pkgs.gnugrep
           pkgs.gnused
+          pkgs.mkalias
           pkgs.openssh
           pkgs.wget
           pkgs.curl
@@ -38,13 +57,12 @@
           pkgs.bottom
           pkgs.lazygit
           pkgs.gdu
+          pkgs.libgcc
           pkgs.git
           pkgs.hub
-          pkgs.libpq
           pkgs.gh
           pkgs.fd
           pkgs.uv
-          pkgs.ccat
           pkgs.bat
           pkgs.httpstat
           pkgs.zoxide
@@ -64,7 +82,7 @@
           pkgs.act
           pkgs.fnm
           pkgs.flyctl
-          pkgs._1password
+          pkgs._1password-cli
           pkgs.deno
           pkgs.bun
           # Start GUI apps available on nix-pkgs unfree
@@ -91,11 +109,18 @@
           pkgs.keka
         ];
 
+      users.users.frankievalentine = {
+        name = username;
+        home = "/Users/frankievalentine";
+      };
+
       homebrew = {
         enable = true;
         brews = [
           "mas"
           "mysql-client"
+          "ccat"
+          "libpq"
         ];
         taps = [
           "homebrew/cask"
@@ -166,12 +191,35 @@
           rm -rf /Applications/Nix\ Apps
           mkdir -p /Applications/Nix\ Apps
           find ${env}/Applications -maxdepth 1 -type l -exec readlink '{}' + |
-          while read src; do
+          while read -r src; do
             app_name=$(basename "$src")
             echo "copying $src" >&2
             ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
           done
         '';
+
+      # Disable Mac startup chime
+      system.startup.chime = false;
+
+      # Enable TouchID for sudo
+      security.pam.enableSudoTouchIdAuth = true;
+
+      # Auto upgrade nix package and the daemon service.
+      services.nix-daemon.enable = true;
+
+      # Necessary for using flakes on this system.
+      nix.settings.experimental-features = "nix-command flakes";
+
+      # Create /etc/zshrc that loads the nix-darwin environment.
+      programs.zsh.enable = true;  # default shell on catalina
+      # programs.fish.enable = true;
+
+      # Set Git commit hash for darwin-version.
+      system.configurationRevision = self.rev or self.dirtyRev or null;
+
+      # Used for backwards compatibility, please read the changelog before changing.
+      # $ darwin-rebuild changelog
+      system.stateVersion = 4;
 
       system.defaults = {
         dock.autohide  = true;
@@ -210,36 +258,18 @@
 
       networking = {
         computerName = "Frankie's Mac Mini";
+        knownNetworkServices = [
+          "Wi-Fi"
+          "Ethernet"
+          "Thunderbolt Bridge"
+        ];
         dns = [
           "1.1.1.1"
           "1.0.0.1"
         ];
         hostName = "Frankie's Mac Mini";
         localHostName = "Frankies-Mac-Mini";
-      }
-
-      # Disable Mac startup chime
-      system.startup.chime = false;
-
-      # Enable TouchID for sudo
-      security.pam.enableSudoTouchIdAuth = true;
-
-      # Auto upgrade nix package and the daemon service.
-      services.nix-daemon.enable = true;
-
-      # Necessary for using flakes on this system.
-      nix.settings.experimental-features = "nix-command flakes";
-
-      # Create /etc/zshrc that loads the nix-darwin environment.
-      programs.zsh.enable = true;  # default shell on catalina
-      # programs.fish.enable = true;
-
-      # Set Git commit hash for darwin-version.
-      system.configurationRevision = self.rev or self.dirtyRev or null;
-
-      # Used for backwards compatibility, please read the changelog before changing.
-      # $ darwin-rebuild changelog
-      system.stateVersion = 4;
+      };
 
       # The platform the configuration will be used on.
       nixpkgs.hostPlatform = "aarch64-darwin";
@@ -258,7 +288,7 @@
             # Apple Silicon Only
             enableRosetta = false;
             # User owning the Homebrew prefix
-            user = "frankie";
+            user = "frankievalentine";
           };
         }
       ];
