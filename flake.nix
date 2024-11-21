@@ -33,7 +33,6 @@
       # $ nix-env -qaP | grep wget
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [
-        inputs.templ.overlays.default
         add-unstable-packages
       ];
       environment.systemPackages =
