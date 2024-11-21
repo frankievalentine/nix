@@ -1,2 +1,2 @@
 # nix
-nix setup for mac
+Nix starter repo
