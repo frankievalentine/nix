@@ -2,9 +2,10 @@
   description = "Darwin system flake - frankievalentine";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
   };
 
@@ -13,6 +14,7 @@
     nix-darwin,
     nixpkgs,
     nixpkgs-unstable,
+    nix-homebrew,
     ...
   } @ inputs: let
     add-unstable-packages = final: _prev: {
