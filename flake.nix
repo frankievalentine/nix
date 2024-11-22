@@ -241,7 +241,6 @@
           autohide  = true;
           autohide-time-modifier = 1.2;
           autohide-delay = 0.01;
-          
           showhidden = true;
           mru-spaces = false;
           tilesize = 55;
@@ -261,27 +260,18 @@
           FXEnableExtensionChangeWarning = false;
           FXRemoveOldTrashItems = true;
           AppleShowAllExtensions = true;
-          AppleShowAllFiles = true;
-          AppleShowAllFolders = true;
-          AppleShowAllLibraries = true;
-          AppleShowAllMountedVolumes = true;
-          AppleShowAllPackages = true;
-          AppleShowAllUsers = true;
           ShowHardDrivesOnDesktop = true;
           ShowRemovableMediaOnDesktop = true;
           ShowMountedServersOnDesktop = true;
           ShowPathbar = true;
-          ShowTabView = true;
-          ShowToolbar = true;
-          ShowSidebar = true;
         };
         NSGlobalDomain = {
           AppleInterfaceStyle = "Dark";
-          KeyRepeat = 2;
+          KeyRepeat = 1;
           AppleShowAllFiles = true;
           NSAutomaticWindowAnimationsEnabled = false;
           "com.apple.mouse.tapBehavior" = 1;
-          "com.apple.sound.beep.feedback" = 0;
+          "com.apple.sound.beep.volume" = 0.000;
           NSAutomaticSpellingCorrectionEnabled = false;
           NSAutomaticCapitalizationEnabled = false;
           NSAutomaticDashSubstitutionEnabled = false;
@@ -291,6 +281,7 @@
         loginwindow.GuestEnabled = false;
         SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
         WindowManager.AutoHide = true;
+        ActivityMonitor.IconType = 5;
         smb.NetBIOSName = "Frankie's Mac Mini";
       };
 
