@@ -41,6 +41,7 @@
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
       nixpkgs.config.allowUnfree = true;
+      nixpkgs.config.input-fonts.acceptLicense = true;
       nixpkgs.overlays = [
         inputs.templ.overlays.default
         add-unstable-packages
@@ -69,7 +70,6 @@
           pkgs.bottom
           pkgs.lazygit
           pkgs.gdu
-          pkgs.libgcc
           pkgs.git
           pkgs.hub
           pkgs.gh
@@ -81,16 +81,12 @@
           pkgs.atuin
           pkgs.mkcert
           pkgs.postgresql_16
-          pkgs.mongodb
-          pkgs.trashy
           pkgs.mas
           pkgs.navi
           pkgs.tmux
           pkgs.cloudflared
           pkgs.kubernetes-helm
           pkgs.kompose
-          pkgs.tart
-          pkgs.vagrant
           pkgs.act
           pkgs.fnm
           pkgs.flyctl
@@ -102,23 +98,18 @@
           pkgs.stats
           pkgs.vscode
           pkgs.warp-terminal
-          pkgs.iterm2
-          pkgs.github-desktop
-          pkgs.httpie
           pkgs.postman
-          pkgs.altair
-          pkgs.tailscale
           pkgs.tableplus
-          pkgs.mongodb-compass
+          pkgs.iterm2
           pkgs.utm
           pkgs._1password-gui
           pkgs.slack
           pkgs.zoom-us
           pkgs.discord
           pkgs.obsidian
-          pkgs.obs-studio
           pkgs.iina
           pkgs.keka
+          pkgs.tart
         ];
 
       users.users.frankievalentine = {
@@ -128,16 +119,17 @@
 
       homebrew = {
         enable = true;
+        taps = [
+          "mongodb/brew"
+          "buo/cask-upgrade"
+        ];
         brews = [
           "mas"
           "mysql-client"
+          "mongodb-community"
           "ccat"
           "libpq"
-        ];
-        taps = [
-          "homebrew/cask"
-          "homebrew/cask-versions"
-          "buo/cask-upgrade"
+          "trash"
         ];
         casks = [
           "google-chrome"
@@ -147,13 +139,20 @@
           "dbngin"
           "transmit"
           "orbstack"
+          "github"
+          "vagrant"
           "figma"
+          "mongodb-compass"
           "framer"
+          "obs"
           "spline"
+          "httpie"
           "rive"
+          "altair-graphql-client"
           "hiddenbar"
           "chatgpt"
           "itsycal"
+          "tailscale"
           "notion"
           "reminders-menubar"
           "timemachineeditor"
@@ -162,13 +161,12 @@
           "nucleo"
           "protonvpn"
           "signal"
-          "ledger-live"
           "webull"
           "tradingview"
         ];
         masApps = {
           "Magnet" = 441258766;
-          "Klack" = 2143728525;
+          "Klack" = 6446206067;
           "KeyStroke Pro" = 1572206224;
           "Cursor Pro" = 1447043133;
         };
@@ -208,7 +206,7 @@
           echo "copying $src" >&2
           ${pkgs.mkalias}/bin/mkalias "$src" "/Applications/Nix Apps/$app_name"
         done
-            '';
+      '';
 
       # Disable Mac startup chime
       system.startup.chime = false;
@@ -239,35 +237,57 @@
       system.stateVersion = 4;
 
       system.defaults = {
-        dock.autohide  = true;
-        dock.autohide-time-modifier = 0.4;
-        dock.showhidden = true;
-        dock.mru-spaces = false;
-        dock.tilesize = 40;
-        dock.wvous-br-corner = 4;
-        dock.persistent-apps = [
-          "/System/Applications/Utilities/Activity Monitor.app"
-          "/Applications/Arc.app"
-          "${pkgs.obsidian}/Applications/Obsidian.app"
-          "${pkgs.vscode}/Applications/Visual Studio Code.app"
-          "${pkgs.iterm2}/Applications/iTerm.app"
-          "/Applications/Figma.app"
-          "/Applications/Framer.app"
-        ];
-        finder.FXPreferredViewStyle = "clmv";
-        finder.AppleShowAllExtensions = true;
-        finder.AppleShowAllFiles = true;
-        finder.FXEnableExtensionChangeWarning = false;
-        finder.FXRemoveOldTrashItems = true;
-        finder.ShowHardDrivesOnDesktop = true;
-        finder.ShowMountedServersOnDesktop = true;
-        finder.ShowPathbar = true;
+        dock = {
+          autohide  = true;
+          autohide-time-modifier = 1.2;
+          autohide-delay = 0.01;
+          finder.FXPreferredViewStyle = "clmv";
+          finder.FXEnableExtensionChangeWarning = false;
+          finder.FXRemoveOldTrashItems = true;
+          showhidden = true;
+          mru-spaces = false;
+          tilesize = 55;
+          wvous-br-corner = 4;
+          persistent-apps = [
+            "/System/Applications/Utilities/Activity Monitor.app"
+            "/Applications/Arc.app"
+            "${pkgs.obsidian}/Applications/Obsidian.app"
+            "${pkgs.vscode}/Applications/Visual Studio Code.app"
+            "${pkgs.iterm2}/Applications/iTerm2.app"
+            "/Applications/Figma.app"
+            "/Applications/Framer.app"
+          ];
+        };
+        "com.apple.finder" = {
+          AppleShowAllExtensions = true;
+          AppleShowAllFiles = true;
+          AppleShowAllFolders = true;
+          AppleShowAllLibraries = true;
+          AppleShowAllMountedVolumes = true;
+          AppleShowAllPackages = true;
+          AppleShowAllUsers = true;
+          ShowHardDrivesOnDesktop = true;
+          ShowRemovableMediaOnDesktop = true;
+          ShowMountedServersOnDesktop = true;
+          ShowPathbar = true;
+          ShowTabView = true;
+          ShowToolbar = true;
+          ShowSidebar = true;
+        };
+        NSGlobalDomain = {
+          AppleInterfaceStyle = "Dark";
+          KeyRepeat = 2;
+          AppleShowAllFiles = true;
+          NSAutomaticWindowAnimationsEnabled = false;
+          "com.apple.mouse.tapBehavior" = 1;
+          "com.apple.sound.beep.feedback" = 0;
+          NSAutomaticSpellingCorrectionEnabled = false;
+          NSAutomaticCapitalizationEnabled = false;
+          NSAutomaticDashSubstitutionEnabled = false;
+          NSAutomaticPeriodSubstitutionEnabled = false;
+          NSAutomaticQuoteSubstitutionEnabled = false;
+        };
         loginwindow.GuestEnabled = false;
-        NSGlobalDomain.AppleInterfaceStyle = "System";
-        NSGlobalDomain.KeyRepeat = 2;
-        NSGlobalDomain.AppleShowAllFiles = true;
-        NSGlobalDomain.NSAutomaticWindowAnimationsEnabled = false;
-        NSGlobalDomain."com.apple.mouse.tapBehavior" = 1;
         SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;
         WindowManager.AutoHide = true;
         smb.NetBIOSName = "Frankie's Mac Mini";
@@ -284,7 +304,7 @@
           "1.1.1.1"
           "1.0.0.1"
         ];
-        hostName = "Frankie's Mac Mini";
+        hostName = "Frankies-Mac-Mini";
         localHostName = "Frankies-Mac-Mini";
       };
 
