@@ -241,9 +241,7 @@
           autohide  = true;
           autohide-time-modifier = 1.2;
           autohide-delay = 0.01;
-          finder.FXPreferredViewStyle = "clmv";
-          finder.FXEnableExtensionChangeWarning = false;
-          finder.FXRemoveOldTrashItems = true;
+          
           showhidden = true;
           mru-spaces = false;
           tilesize = 55;
@@ -258,7 +256,10 @@
             "/Applications/Framer.app"
           ];
         };
-        "com.apple.finder" = {
+        finder = {
+          FXPreferredViewStyle = "clmv";
+          FXEnableExtensionChangeWarning = false;
+          FXRemoveOldTrashItems = true;
           AppleShowAllExtensions = true;
           AppleShowAllFiles = true;
           AppleShowAllFolders = true;
