@@ -102,7 +102,6 @@
           pkgs.tableplus
           pkgs.iterm2
           pkgs.utm
-          pkgs._1password-gui
           pkgs.slack
           pkgs.zoom-us
           pkgs.discord
@@ -138,10 +137,12 @@
           "cursor"
           "dbngin"
           "transmit"
+          "1password"
           "orbstack"
           "github"
           "vagrant"
           "figma"
+          "appcleaner"
           "mongodb-compass"
           "framer"
           "obs"
@@ -270,6 +271,7 @@
           KeyRepeat = 1;
           AppleShowAllFiles = true;
           NSAutomaticWindowAnimationsEnabled = false;
+          NSScrollAnimationEnabled = false;
           "com.apple.mouse.tapBehavior" = 1;
           "com.apple.sound.beep.volume" = 0.000;
           NSAutomaticSpellingCorrectionEnabled = false;
